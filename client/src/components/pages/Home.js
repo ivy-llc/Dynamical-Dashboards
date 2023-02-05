@@ -6,7 +6,7 @@ class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      submodules: ["activations", "losses", "layers", "norms"],
+      submodules: [],
       submodule: "",
       backend: "",
       backend_version: "",
@@ -104,7 +104,13 @@ class Home extends Component {
   handleSubmit(event) {
     event.preventDefault();
     var data = [];
-    var dash_data = this.dashboard_data[this.state.submodule][this.state.backend + "\n"];
+    console.log(this.dashboard_data);
+    var dash_data;
+    if (this.state.module == "array_api") {
+      dash_data = this.dashboard_data[this.state.backend];
+    } else {
+      dash_data = this.dashboard_data[this.state.submodule][this.state.backend + "\n"];
+    }
     for (var test in dash_data) {
       data.push([test, dash_data[test]]);
     }
@@ -133,7 +139,9 @@ class Home extends Component {
                 <select value={this.state.submodule} onChange={this.handleSubmoduleChange}>
                   <option value="Submodule">Submodule</option>
                   {this.state.submodules.map((submodule) => (
-                    <option value={submodule}>{submodule}</option>
+                    <option value={submodule}>
+                      {submodule.charAt(0).toUpperCase() + submodule.slice(1)}
+                    </option>
                   ))}
                 </select>
               </div>

@@ -1,0 +1,130 @@
+.Home-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.Home-input {
+  flex-basis: 30vw;
+}
+
+.Home-select {
+  margin: 10px;
+}
+
+select {
+  width: 100%;
+  height: 50px;
+  font-size: 100%;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 10px;
+  background-color: #009001;
+  border: none;
+  border-bottom: 2px solid #009001;
+  color: white;
+  padding: 10px;
+  padding-right: 38px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  /* Adding transition effect */
+  transition: color 0.3s ease, background-color 0.3s ease, border-bottom-color 0.3s ease;
+}
+/* For IE <= 11 */
+select::-ms-expand {
+  display: none;
+}
+select:hover,
+select:focus {
+  color: #009001;
+  background-color: white;
+  border-bottom-color: #dcdcdc;
+}
+
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  float: right;
+  background-color: #006100;
+  border: white;
+  border-radius: 10px;
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+.Home-margin {
+  margin: 5px;
+}
+
+.Home-head {
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: 3%;
+  font-size: 3vh;
+  /* line-height: 151px; */
+  color: #ffffff;
+}
+
+.Home-extra {
+  margin: 50px;
+}
+
+.Home-maxwidth {
+  max-width: 1200px;
+}
+
+.Home-content {
+  line-height: 100%;
+  padding: 0;
+  margin-left: 13%;
+  margin-right: 10%;
+  margin-bottom: 10px;
+  font-size: 2.5vh;
+  color: #ffffff;
+  /* font-weight: 500; */
+  /* text-align: justify; */
+}
+
+.Home-centered {
+  margin-left: 5%;
+  margin-right: 5%;
+}
+
+.Home-left {
+  max-width: 800px;
+}
+
+.Home-table {
+  border-collapse: collapse;
+  /* margin-left: auto;
+  margin-right: auto; */
+  margin: 25px;
+  font-size: 1em;
+  min-width: 200px;
+  border-radius: 5px 5px 0 0;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+th {
+  background-color: #006100;
+  color: #ffffff;
+  text-align: left;
+  font-weight: bold;
+  padding: 12px 15px;
+}
+
+td {
+  padding: 12px 15px;
+}
+
+tr {
+  border-bottom: 1px solid #dddddd;
+}
+
+tr:nth-of-type(even) {
+  background-color: #f3f3f3;
+}

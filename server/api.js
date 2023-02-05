@@ -23,7 +23,6 @@ router.post("/login", auth.login);
 router.post("/logout", auth.logout);
 router.get("/whoami", (req, res) => {
   if (!req.user) {
-    // not logged in
     return res.send({});
   }
 
@@ -36,52 +35,9 @@ router.get("/user", (req, res) => {
   });
 });
 
-router.post("/answer", (req, res) => {
-  Question.updateOne(
-    { _id: ObjectID(req.body.qid) },
-    { $set: { answer: req.body.answer } },
-    function (e) {
-      if (e) {
-        console.log(e);
-        return;
-      }
-      console.log("success");
-    }
-  );
-});
-
-router.get("/question", (req, res) => {
-  Question.find({ author_id: req.query.parent }).then((comments) => {
-    res.send(comments);
-  });
-});
-
-router.post("/question", auth.ensureLoggedIn, (req, res) => {
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log("Email sent: " + info.response);
-    }
-  });
-  const newQuestion = new Question({
-    author_id: req.user._id,
-    content: req.body.content,
-    answer: "",
-  });
-
-  newQuestion.save().then((question) => res.send(question));
-});
-
 router.post("/initsocket", (req, res) => {
   // do nothing if user not logged in
   res.send({});
-});
-
-router.get("/allQuest", (req, res) => {
-  Question.find({}).then((comments) => {
-    res.send(comments);
-  });
 });
 
 router.get("/submodules", (req, res) => {
