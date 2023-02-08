@@ -36,7 +36,7 @@ class Home extends Component {
       tensorflow: "TensorFlow Frontend",
       torch: "PyTorch Frontend",
       jax: "JAX Frontend",
-      numpy: "NumPy",
+      numpy: "NumPy Frontend",
       exp_core: "Experimental Core",
       exp_nn: "Experimental NN",
       misc: "Miscellaneous",
