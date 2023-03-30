@@ -40,13 +40,111 @@ router.post("/initsocket", (req, res) => {
   res.send({});
 });
 
+async function getOuterLevelKeys(collection) {
+  const pipeline = [
+    { $project: { document: { $objectToArray: "$$ROOT" } } },
+    { $unwind: "$document" },
+    { $group: { _id: null, keys: { $addToSet: "$document.k" } } },
+    { $project: { _id: 0, keys: 1 } },
+  ];
+
+  const results = await collection.aggregate(pipeline).limit(1).toArray();
+  return results.length > 0 ? results[0].keys : [];
+}
+
 router.get("/submodules", (req, res) => {
   const db = mongoose.connection.db;
-  db.collection(req.query.module)
-    .find()
-    .toArray((err, result) => {
-      res.send(result[0]);
+  const collection = db.collection(req.query.module);
+
+  // Process the collection here
+  getOuterLevelKeys(collection).then((keys) => {
+    res.send(keys);
+    console.log("Outer-level keys:", keys);
+  });
+
+  // db.collection(req.query.module).mapReduce(
+  //   function () {
+  //     for (var key in this) {
+  //       emit(key, null);
+  //     }
+  //   },
+  //   function (key, stuff) {
+  //     return null;
+  //   },
+  //   { out: "allFieldNames" },
+  //   function (err, results) {
+  //     var fields = db.collection("allFieldNames").distinct("_id");
+  //     fields.then(function (data) {
+  //       var finalData = { status: "success", fields: data };
+  //       console.log(finalData);
+  //       // res.send(finalData);
+  //       // delteCollection(db, "allFieldNames");
+  //     });
+  //   }
+  // );
+
+  // db.collection(req.query.module)
+  //   .findOne()
+  //   .then((result) => {
+  //     console.log(result);
+  //   });
+  // console.log(
+  // .toArray((err, result) => {
+  //   res.send(result[0]);
+  // });
+});
+
+async function getFilteredData(collection, keys) {
+  // Create a projection object
+  const projection = {};
+  for (const key of keys) {
+    projection[key] = 1;
+  }
+
+  // Find the first document with the specified keys
+  const result = await collection.findOne({}, { projection });
+  delete result._id;
+  return result;
+}
+
+router.get("/data", (req, res) => {
+  const db = mongoose.connection.db;
+  const collection = db.collection(req.query.module);
+  console.log(req.query.submodules);
+  console.log(req.query.backends);
+  console.log(req.query.frontends);
+  submodules = req.query.submodules.map((submodule) => submodule.value);
+  backends = req.query.backends.map((backend) => {
+    var str = backend.value;
+    const slashIndex = str.indexOf("/");
+    const backend_name = str.substring(0, slashIndex) + "\n";
+    let backend_version = str.substring(slashIndex + 1);
+    backend_version = backend_version.replace(/\./g, "_");
+    return backend_name + "." + backend_version;
+  });
+  frontends = req.query.frontends.map((frontend) => {
+    let str = frontend.value;
+    const slashIndex = str.indexOf("/");
+    let frontend_version = str.substring(slashIndex + 1);
+    return frontend_version.replace(/\./g, "_");
+  });
+  const keys = [];
+
+  submodules.forEach((submodule) => {
+    backends.forEach((backend) => {
+      frontends.forEach((frontend) => {
+        const key = submodule + "." + backend + "." + frontend;
+        keys.push(key);
+      });
     });
+  });
+  console.log(keys);
+
+  // Fetch the filtered data
+  getFilteredData(collection, keys).then((filteredData) => {
+    console.log(filteredData);
+    res.send(filteredData);
+  });
 });
 
 // anything else falls to this "not found" case
