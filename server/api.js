@@ -61,37 +61,6 @@ router.get("/submodules", (req, res) => {
     res.send(keys);
     console.log("Outer-level keys:", keys);
   });
-
-  // db.collection(req.query.module).mapReduce(
-  //   function () {
-  //     for (var key in this) {
-  //       emit(key, null);
-  //     }
-  //   },
-  //   function (key, stuff) {
-  //     return null;
-  //   },
-  //   { out: "allFieldNames" },
-  //   function (err, results) {
-  //     var fields = db.collection("allFieldNames").distinct("_id");
-  //     fields.then(function (data) {
-  //       var finalData = { status: "success", fields: data };
-  //       console.log(finalData);
-  //       // res.send(finalData);
-  //       // delteCollection(db, "allFieldNames");
-  //     });
-  //   }
-  // );
-
-  // db.collection(req.query.module)
-  //   .findOne()
-  //   .then((result) => {
-  //     console.log(result);
-  //   });
-  // console.log(
-  // .toArray((err, result) => {
-  //   res.send(result[0]);
-  // });
 });
 
 async function getFilteredData(collection, keys) {
