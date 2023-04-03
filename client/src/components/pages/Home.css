@@ -1,6 +1,7 @@
 .Home-container {
   display: flex;
   flex-direction: row;
+  align-items: flex-start; /* Add this property */
 }
 
 .Home-input {
@@ -109,7 +110,7 @@ input[type="reset"] {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
 
-th {
+/* th {
   background-color: #006100;
   color: #ffffff;
   text-align: left;
@@ -127,4 +128,4 @@ tr {
 
 tr:nth-of-type(even) {
   background-color: #f3f3f3;
-}
+} */
