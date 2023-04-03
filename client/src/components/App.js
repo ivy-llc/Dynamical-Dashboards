@@ -23,7 +23,8 @@ class App extends Component {
         <NavBar />
         <div className="App-container">
           <Router>
-            <Home path="/" />
+            <Home path="/" module={null} submodule={null} backend={null} frontend={null} />
+            <Home path="/:module/:submodule?/:backend?/:frontend?" />
             <NotFound default />
           </Router>
         </div>
