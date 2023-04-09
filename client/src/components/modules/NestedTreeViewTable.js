@@ -37,7 +37,7 @@ const NestedTreeViewTable = ({ data }) => {
   const computeAggregateValue = (obj) => {
     const values = getLeafValues(obj);
 
-    if (values.every((value) => value.includes("success"))) {
+    if (values.length != 0 && values.every((value) => value.includes("success"))) {
       return '<img src="https://img.shields.io/badge/-success-success" />';
     } else {
       return '<img src="https://img.shields.io/badge/-failure-red" />';
@@ -60,7 +60,9 @@ const NestedTreeViewTable = ({ data }) => {
               className={`tree-node ${isObject ? "expandable" : ""} ${isExpanded ? "open" : ""}`}
               onClick={() => isObject && toggleExpand(currentKey)}
             >
-              <span style={{ paddingLeft: `${level * 20}px` }}>{key}</span>
+              <span style={{ paddingLeft: `${isObject ? level * 20 : 20 + level * 20}px` }}>
+                {key}
+              </span>
             </td>
             <td>
               <div dangerouslySetInnerHTML={{ __html: aggregateValue }}></div>
@@ -69,7 +71,7 @@ const NestedTreeViewTable = ({ data }) => {
           {isObject && isExpanded && (
             <tr>
               <td colSpan="2" className="heading">
-                {headings[level + 1]}
+                <span style={{ paddingLeft: `${40 + level * 20}px` }}>{headings[level + 1]}</span>
               </td>
             </tr>
           )}
