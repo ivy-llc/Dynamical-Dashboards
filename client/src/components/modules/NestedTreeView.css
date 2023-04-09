@@ -1,0 +1,16 @@
+.tree-view {
+  list-style-type: none;
+  padding-left: 20px;
+}
+
+.tree-node {
+  cursor: pointer;
+}
+
+.tree-node.expandable::before {
+  content: "► ";
+}
+
+.tree-node:not(.expandable)::before {
+  content: "• ";
+}
