@@ -1,0 +1,65 @@
+.tree-view-table {
+  width: 50%;
+  margin: 25px;
+  border-collapse: collapse;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  border-radius: 5px 5px 0 0;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.tree-view-table th,
+.tree-view-table td {
+  border: 1px solid #f0f0f0;
+  padding: 12px;
+  text-align: left;
+}
+
+.tree-view-table th {
+  background-color: #006100;
+  color: white;
+  font-weight: 500;
+}
+
+.tree-view-table tr:nth-child(even) {
+  background-color: #f7f7f7;
+}
+
+.tree-view-table tr:hover {
+  background-color: #e0e0e0;
+}
+
+.tree-node {
+  cursor: pointer;
+  /* display: inline-block; */
+}
+
+.tree-node.expandable::before {
+  content: "► ";
+  color: #006100;
+  margin-right: 5px;
+}
+
+.tree-node.expandable.open::before {
+  content: "▼ ";
+}
+
+.heading {
+  font-weight: bold;
+  background-color: #f0f0f0;
+  text-align: left;
+}
+
+.tree-node:not(.expandable)::before {
+  content: "";
+}
+
+.tree-view-table tbody tr {
+  height: auto;
+}
+
+.tree-view-table tbody td {
+  height: auto;
+  white-space: nowrap;
+}
