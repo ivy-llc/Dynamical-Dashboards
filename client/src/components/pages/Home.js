@@ -39,14 +39,14 @@ class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      module: "",
+      module: this.props.module || "",
       submodules: [],
       backend_versions: ["Latest-stable"],
       frontend_versions: ["Latest-stable"],
-      submodule: [],
-      backend: [],
+      submodule: this.props.submodule ? this.props.submodule.split(",") : [],
+      backend: this.props.backend ? this.props.backend.split(",") : [],
       backend_version: "",
-      frontend: "",
+      frontend: this.props.frontend ? this.props.frontend.split(",") : [],
       frontend_version: "",
       dashboard: [],
     };
