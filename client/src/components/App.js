@@ -24,7 +24,10 @@ class App extends Component {
         <div className="App-container">
           <Router>
             <Home path="/" module={null} submodule={null} backend={null} frontend={null} />
-            <Home path="/:module/:submodule?/:backend?/:frontend?" />
+            <Home path="/:module" submodule={null} backend={null} frontend={null} />
+            <Home path="/:module/:submodule" backend={null} frontend={null} />
+            <Home path="/:module/:submodule/:backend" frontend={null} />
+            <Home path="/:module/:submodule/:backend/:frontend" />
             <NotFound default />
           </Router>
         </div>
