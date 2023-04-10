@@ -35,6 +35,16 @@ function framework_map(framework_version) {
   );
 }
 
+const fw_map = (fw) => ({
+  value: fw,
+  label: framework_map(fw),
+});
+
+const submodule_map = (submodule) => ({
+  value: submodule,
+  label: submodule.charAt(0).toUpperCase() + submodule.slice(1),
+});
+
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -43,15 +53,24 @@ class Home extends Component {
       submodules: [],
       backend_versions: ["Latest-stable"],
       frontend_versions: ["Latest-stable"],
-      submodule: this.props.submodule ? this.props.submodule.split(",") : [],
-      backend: this.props.backend ? this.props.backend.split(",") : [],
+      submodule: this.props.submodule ? this.props.submodule.split(",").map(submodule_map) : [],
+      backend: this.props.backend
+        ? this.props.backend.replace(/:/g, "/").split(",").map(fw_map)
+        : [],
       backend_version: "",
-      frontend: this.props.frontend ? this.props.frontend.split(",") : [],
+      frontend: this.props.frontend
+        ? this.props.frontend.replace(/:/g, "/").split(",").map(fw_map)
+        : [],
       frontend_version: "",
       dashboard: [],
     };
+    if (this.props.module) {
+      this.handleModuleChange({ target: { value: this.props.module } });
+    }
+
     this.dashboard_data = {};
     this.torch_versions = [
+      "torch/latest-stable",
       "torch/1.4.0",
       "torch/1.5.0",
       "torch/1.10.1",
@@ -62,12 +81,12 @@ class Home extends Component {
       "torch/1.13.0",
     ];
     this.tensorflow_versions = [
+      "tensorflow/latest-stable",
       "tensorflow/2.2.0",
       "tensorflow/2.2.1",
       "tensorflow/2.2.2",
       "tensorflow/2.4.4",
       "tensorflow/2.9.0",
-      "tensorflow/2.9.1",
       "tensorflow/2.9.1",
       "tensorflow/2.9.2",
     ];
@@ -93,6 +112,7 @@ class Home extends Component {
       "jaxlib/0.3.22",
     ];
     this.numpy_versions = [
+      "numpy/latest-stable",
       "numpy/1.17.3",
       "numpy/1.17.4",
       "numpy/1.23.1",
@@ -100,23 +120,18 @@ class Home extends Component {
       "numpy/1.24.1",
       "numpy/1.24.2",
     ];
-    this.jax_versions = [];
+    this.jax_versions = ["jax/latest-stable"];
     for (const jax_ver of this.jax_only_versions) {
       for (const jaxlib_ver of this.jaxlib_versions) {
         this.jax_versions.push(jax_ver + "/" + jaxlib_ver);
       }
     }
     this.backend_versions = this.torch_versions.concat(
-      this.torch_versions,
       this.tensorflow_versions,
       this.jax_versions,
       this.numpy_versions
     );
     this.frontend_versions = this.backend_versions;
-    // console.log(this.torch_versions);
-    // console.log(this.tensorflow_versions);
-    // console.log(this.jax_versions);
-    // console.log(this.numpy_versions);
 
     this.modules = [
       "array_api",
@@ -170,37 +185,18 @@ class Home extends Component {
         }
       }
       this.setState({ submodules: mod_submods });
-      console.log(
-        mod_submods.map((submodule) => ({
-          value: submodule,
-          label: submodule.charAt(0).toUpperCase() + submodule.slice(1),
-        }))
-      );
+
       this.dashboard_data = submodules;
     });
   }
 
   handleSubmoduleChange(event) {
-    console.log(event);
-    console.log(event.map((option) => option.value));
     this.setState({ submodule: event });
   }
 
   handleBackendChange(event) {
     console.log(event);
     this.setState({ backend: event });
-    // Get all the backend_versions
-    // let backend_vers = [];
-    // console.log("here!");
-    // console.log(this.dashboard_data);
-    // console.log(this.dashboard_data[this.state.submodule]);
-    // console.log(this.state.backend);
-    // console.log(this.dashboard_data[this.state.submodule][event.target.value + "\n"]);
-    // for (var version in this.dashboard_data[this.state.submodule][event.target.value + "\n"]) {
-    //   backend_vers.push(version);
-    // }
-    // console.log(backend_vers);
-    // this.setState({ backend_versions: backend_vers });
   }
 
   handleBackendVersionChange(event) {
@@ -236,29 +232,6 @@ class Home extends Component {
     }).then((data) => {
       this.setState({ dashboard: data });
     });
-    // var data = [];
-    // console.log(this.dashboard_data);
-    // var dash_data;
-    // if (this.state.module == "array_api") {
-    //   dash_data = this.dashboard_data[this.state.backend];
-    // } else if (this.state.frontend_version != "") {
-    //   dash_data =
-    //     this.dashboard_data[this.state.submodule][this.state.backend + "\n"][
-    //       this.state.backend_version
-    //     ][this.state.frontend_version];
-    // } else {
-    //   dash_data =
-    //     this.dashboard_data[this.state.submodule][this.state.backend + "\n"][
-    //       this.state.backend_version
-    //     ];
-    // }
-    // for (var test in dash_data) {
-    //   data.push([test, dash_data[test]]);
-    // }
-    // console.log(data);
-    // this.setState({
-    //   dashboard: data,
-    // });
   }
 
   render() {
@@ -275,154 +248,32 @@ class Home extends Component {
                   ))}
                 </select>
               </div>
-
-              {/*<div className="Home-select">
-                <select value={this.state.submodule} onChange={this.handleSubmoduleChange}>
-                  <option value="Submodule">Submodule</option>
-                  {this.state.submodules.map((submodule) => (
-                    <option value={submodule}>
-                      {submodule.charAt(0).toUpperCase() + submodule.slice(1)}
-                    </option>
-                  ))}
-                </select>
-              </div> */}
-
               <CustomSelect
                 value={this.state.submodule}
                 handleChange={this.handleSubmoduleChange}
-                options={this.state.submodules.map((val) => ({
-                  value: val,
-                  label: val.charAt(0).toUpperCase() + val.slice(1),
-                }))}
+                options={this.state.submodules.map(submodule_map)}
                 name="Submodule"
               />
-              {/* <Select
-                isMulti={true}
-                value={this.state.submodule}
-                onChange={this.handleSubmoduleChange}
-                options={this.state.submodules.map((submodule) => ({
-                  value: submodule,
-                  label: submodule.charAt(0).toUpperCase() + submodule.slice(1),
-                }))}
-                placeholder="Submodule"
-                styles={{
-                  control: (baseStyles, state) => ({
-                    ...baseStyles,
-                    margin: "10px",
-                    borderColor: "#009001",
-                  }),
-                  indicatorSeparator: (baseStyles, state) => ({
-                    ...baseStyles,
-                    backgroundColor: "#009001",
-                  }),
-                  dropdownIndicator: (baseStyles, state) => ({
-                    ...baseStyles,
-                    color: "#009001",
-                  }),
-                  option: (baseStyles, state) => ({
-                    ...baseStyles,
-                    color: "#009001",
-                  }),
-                  multiValue: (baseStyles, state) => ({
-                    ...baseStyles,
-                    backgroundColor: "#009001",
-                  }),
-                  multiValueLabel: (baseStyles, state) => ({
-                    ...baseStyles,
-                    color: "white",
-                  }),
-                  placeholder: (baseStyles, state) => ({
-                    ...baseStyles,
-                    color: "#009001",
-                  }),
-                }}
-              /> */}
-
-              {/* <div className="Home-select">
-                <select value={this.state.backend} onChange={this.handleBackendChange}>
-                  <option value="Backend">Backend</option>
-                  {this.backends.map((backend) => (
-                    <option value={backend}>{this.framework_map[backend]}</option>
-                  ))}
-                </select>
-              </div> */}
 
               <CustomSelect
                 value={this.state.backend}
                 handleChange={this.handleBackendChange}
-                options={this.backend_versions.map((backend) => ({
-                  value: backend,
-                  label: framework_map(backend),
-                }))}
+                options={this.backend_versions.map(fw_map)}
                 name="Backend"
               />
-
-              {/* <div className="Home-select">
-                <select
-                  value={this.state.backend_version}
-                  onChange={this.handleBackendVersionChange}
-                >
-                  <option value="Backend Version">Backend Version</option>
-                  {this.state.backend_versions.map((backend_version) => (
-                    <option value={backend_version}>{backend_version}</option>
-                  ))}
-                </select>
-              </div> */}
-
-              {/* <div className="Home-select">
-                <select value={this.state.frontend} onChange={this.handleFrontendChange}>
-                  <option value="Frontend">Frontend:</option>
-                  {this.frontends.map((frontend) => (
-                    <option value={frontend}>{this.framework_map[frontend]}</option>
-                  ))}
-                </select>
-              </div> */}
 
               <CustomSelect
                 value={this.state.frontend}
                 handleChange={this.handleFrontendChange}
-                options={this.frontend_versions.map((frontend) => ({
-                  value: frontend,
-                  label: framework_map(frontend),
-                }))}
+                options={this.frontend_versions.map(fw_map)}
                 name="Frontend"
               />
-
-              {/* <div className="Home-select">
-                <select
-                  value={this.state.frontend_version}
-                  onChange={this.handleFrontendVersionChange}
-                >
-                  <option value="Frontend Version">Frontend Version:</option>
-                  {this.state.frontend_versions.map((frontend_version) => (
-                    <option value={frontend_version}>{frontend_version}</option>
-                  ))}
-                </select>
-              </div> */}
 
               <input type="submit" value="Submit" />
             </form>
           </div>
 
-          <NestedTreeViewTable data={this.state.dashboard} />
-          {/* <NestedTable data={this.state.dashboard} /> */}
-
-          {/* <div>
-            <table align="center" class="Home-table">
-              <tr>
-                <th>Test</th>
-                <th>Result</th>
-              </tr>
-              {this.state.dashboard.map((test_result) => (
-                <tr>
-                  <td>{test_result[0]}</td>
-                  <td>
-                    <div dangerouslySetInnerHTML={{ __html: test_result[1] }}></div>
-                  </td>
-                </tr>
-              ))}
-            </table>
-          </div> */}
+          <NestedTreeViewTable data={this.state.dashboard} module={this.state.module} />
         </div>
       </>
     );
