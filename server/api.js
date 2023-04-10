@@ -82,38 +82,61 @@ router.get("/data", (req, res) => {
   console.log(req.query.submodules);
   console.log(req.query.backends);
   console.log(req.query.frontends);
-  submodules = req.query.submodules.map((submodule) => submodule.value);
-  backends = req.query.backends.map((backend) => {
-    var str = backend.value;
-    const slashIndex = str.indexOf("/");
-    const backend_name = str.substring(0, slashIndex) + "\n";
-    let backend_version = str.substring(slashIndex + 1);
-    backend_version = backend_version.replace(/\./g, "_");
-    return backend_name + "." + backend_version;
-  });
-  frontends = req.query.frontends.map((frontend) => {
-    let str = frontend.value;
-    const slashIndex = str.indexOf("/");
-    let frontend_version = str.substring(slashIndex + 1);
-    return frontend_version.replace(/\./g, "_");
-  });
-  const keys = [];
-
-  submodules.forEach((submodule) => {
-    backends.forEach((backend) => {
-      frontends.forEach((frontend) => {
-        const key = submodule + "." + backend + "." + frontend;
-        keys.push(key);
-      });
+  if (!req.query.submodules) {
+    // Array API Tests
+    keys = req.query.backends.map((backend) => {
+      var str = backend.value;
+      const slashIndex = str.indexOf("/");
+      const backend_name = str.substring(0, slashIndex);
+      return backend_name;
     });
-  });
-  console.log(keys);
+    getFilteredData(collection, keys).then((filteredData) => {
+      console.log(filteredData);
+      res.send(filteredData);
+    });
+  } else {
+    submodules = req.query.submodules.map((submodule) => submodule.value);
+    backends = req.query.backends.map((backend) => {
+      var str = backend.value;
+      const slashIndex = str.indexOf("/");
+      const backend_name = str.substring(0, slashIndex) + "\n";
+      let backend_version = str.substring(slashIndex + 1);
+      backend_version = backend_version.replace(/\./g, "_");
+      return backend_name + "." + backend_version;
+    });
+    const keys = [];
+    if (req.query.frontends) {
+      frontends = req.query.frontends.map((frontend) => {
+        let str = frontend.value;
+        const slashIndex = str.indexOf("/");
+        let frontend_version = str.substring(slashIndex + 1);
+        return frontend_version.replace(/\./g, "_");
+      });
+      submodules.forEach((submodule) => {
+        backends.forEach((backend) => {
+          frontends.forEach((frontend) => {
+            const key = submodule + "." + backend + "." + frontend;
+            keys.push(key);
+          });
+        });
+      });
+    } else {
+      submodules.forEach((submodule) => {
+        backends.forEach((backend) => {
+          const key = submodule + "." + backend;
+          keys.push(key);
+        });
+      });
+    }
 
-  // Fetch the filtered data
-  getFilteredData(collection, keys).then((filteredData) => {
-    console.log(filteredData);
-    res.send(filteredData);
-  });
+    console.log(keys);
+
+    // Fetch the filtered data
+    getFilteredData(collection, keys).then((filteredData) => {
+      console.log(filteredData);
+      res.send(filteredData);
+    });
+  }
 });
 
 // anything else falls to this "not found" case
