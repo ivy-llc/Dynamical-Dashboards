@@ -21,7 +21,7 @@ function getLeafValues(obj) {
   return values;
 }
 
-const NestedTreeViewTable = ({ data }) => {
+const NestedTreeViewTable = ({ data, module }) => {
   const [expandedKeys, setExpandedKeys] = useState(new Set());
 
   const toggleExpand = (key) => {
@@ -44,12 +44,15 @@ const NestedTreeViewTable = ({ data }) => {
     }
   };
 
-  const headings = ["Submodule", "Backend", "Backend Version", "Frontend Version", "Test"];
+  const headings =
+    module == "jax" || module == "numpy" || module == "torch" || module == "tensorflow"
+      ? ["Submodule", "Backend", "Backend Version", "Frontend Version", "Test"]
+      : ["Submodule", "Backend", "Backend Version", "Test"];
 
   const renderTable = (obj, level = 0, parentKey = "") => {
     return Object.keys(obj).map((key) => {
       const isObject = typeof obj[key] === "object" && obj[key] !== null;
-      const aggregateValue = isObject ? computeAggregateValue(obj) : obj[key];
+      const aggregateValue = isObject ? computeAggregateValue(obj[key]) : obj[key];
       const currentKey = parentKey ? `${parentKey}.${key}` : key;
       const isExpanded = expandedKeys.has(currentKey);
 
