@@ -36,7 +36,7 @@ const socket = require("./server-socket");
 // TODO change connection URL after setting up your own database
 const mongoConnectionURL = process.env.ATLAS_SRV;
 // TODO change database name to the name you chose
-const databaseName = "Ivy_tests";
+const databaseName = "Ivy_tests_multi";
 
 // connect to mongodb
 connectdb = () => {
