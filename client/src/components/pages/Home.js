@@ -1,11 +1,9 @@
 import React, { Component } from "react";
+import { navigate } from "@reach/router";
 
 import "./Home.css";
 import { get } from "jquery";
-// import Select from "react-select";
 import CustomSelect from "../modules/Select";
-import NestedTable from "../modules/NestedTable";
-import NestedTreeView from "../modules/NestedTreeView";
 import NestedTreeViewTable from "../modules/NestedTreeViewTable";
 function framework_map(framework_version) {
   var lst = framework_version.split("/");
@@ -45,29 +43,29 @@ const submodule_map = (submodule) => ({
   label: submodule.charAt(0).toUpperCase() + submodule.slice(1),
 });
 
+const value_map = (options) => options.value;
+
 class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
       module: this.props.module || "",
       submodules: [],
-      backend_versions: ["Latest-stable"],
-      frontend_versions: ["Latest-stable"],
       submodule: this.props.submodule ? this.props.submodule.split(",").map(submodule_map) : [],
       backend: this.props.backend
-        ? this.props.backend.replace(/:/g, "/").split(",").map(fw_map)
+        ? this.props.backend.replace(/:/g, "/").replace(/_/g, ".").split(",").map(fw_map)
         : [],
-      backend_version: "",
       frontend: this.props.frontend
-        ? this.props.frontend.replace(/:/g, "/").split(",").map(fw_map)
+        ? this.props.frontend.replace(/:/g, "/").replace(/_/g, ".").split(",").map(fw_map)
         : [],
-      frontend_version: "",
       dashboard: [],
     };
     if (this.props.module) {
       this.handleModuleChange({ target: { value: this.props.module } });
     }
-
+    if (this.props.backend) {
+      this.handleSubmit();
+    }
     this.dashboard_data = {};
     this.torch_versions = [
       "torch/latest-stable",
@@ -168,6 +166,44 @@ class Home extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    const module = this.state.module;
+    const submodule = this.state.submodule;
+    const backend = this.state.backend;
+    const frontend = this.state.frontend;
+
+    if (
+      prevState.module !== module ||
+      prevState.submodule !== submodule ||
+      prevState.backend !== backend ||
+      prevState.frontend !== frontend
+    ) {
+      let newPath = `/${module}`;
+      if (submodule.length !== 0) {
+        console.log(submodule);
+        const submodule_string = submodule.map(value_map).join(",");
+        newPath += "/" + submodule_string;
+        if (backend.length !== 0) {
+          const backend_string = backend
+            .map(value_map)
+            .join(",")
+            .replace(/\//g, ":")
+            .replace(/\./g, "_");
+          newPath += "/" + backend_string;
+          if (frontend.length !== 0) {
+            const frontend_string = frontend
+              .map(value_map)
+              .join(",")
+              .replace(/\//g, ":")
+              .replace(/\./g, "_");
+            newPath += "/" + frontend_string;
+          }
+        }
+      }
+      navigate(newPath, { replace: true });
+    }
+  }
+
   handleModuleChange(event) {
     this.setState({ module: event.target.value });
     get("/api/submodules", { module: event.target.value }).then((submodules) => {
@@ -218,12 +254,13 @@ class Home extends Component {
   }
 
   handleFrontendChange(event) {
-    console.log(event);
     this.setState({ frontend: event });
   }
 
-  handleSubmit(event) {
-    event.preventDefault();
+  handleSubmit(event = null) {
+    if (event) {
+      event.preventDefault();
+    }
     get("/api/data", {
       module: this.state.module,
       submodules: this.state.submodule,
