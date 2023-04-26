@@ -139,6 +139,23 @@ router.get("/data", (req, res) => {
   }
 });
 
+router.get("/test", (req, res) => {
+  const module = req.query.module;
+  const submodule = req.query.submodule;
+  const backend = req.query.backend;
+  const test = req.query.test;
+
+  const db = mongoose.connection.db;
+  const collection = db.collection(module);
+  const key = submodule + "." + backend + "\n.latest-stable." + test;
+  const keys = [key];
+  getFilteredData(collection, keys).then((filteredData) => {
+    const result_badge = filteredData[submodule][backend + "\n"]["latest-stable"][test];
+    const test_result = result_badge.includes("success");
+    res.send(test_result);
+  });
+});
+
 // anything else falls to this "not found" case
 router.all("*", (req, res) => {
   console.log(`API route not found: ${req.method} ${req.url}`);
