@@ -139,21 +139,31 @@ router.get("/data", (req, res) => {
   }
 });
 
-router.get("/test", (req, res) => {
-  const module = req.query.module;
-  const submodule = req.query.submodule;
-  const backend = req.query.backend;
-  const test = req.query.test;
+router.get("/test", async (req, res) => {
+  try {
+    const module = req.query.module;
+    const submodule = req.query.submodule;
+    const backend = req.query.backend;
+    const test = req.query.test;
 
-  const db = mongoose.connection.db;
-  const collection = db.collection(module);
-  const key = submodule + "." + backend + "\n.latest-stable." + test;
-  const keys = [key];
-  getFilteredData(collection, keys).then((filteredData) => {
-    const result_badge = filteredData[submodule][backend + "\n"]["latest-stable"][test];
-    const test_result = result_badge.includes("success");
+    const db = mongoose.connection.db;
+    const collection = db.collection(module);
+    let key = "";
+    if (module == "jax" || module == "numpy" || module == "torch" || module == "tensorflow") {
+      key = submodule + "." + backend + "\n.latest-stable.latest-stable." + test;
+    } else {
+      key = submodule + "." + backend + "\n.latest-stable." + test;
+    }
+    const keys = [key];
+    const filteredData = await getFilteredData(collection, keys);
+    const result_badge =
+      key.split(".").reduce((acc, k) => acc && acc[k], filteredData) ?? undefined;
+    const test_result = result_badge ? result_badge.includes("success") : true;
     res.send(test_result);
-  });
+  } catch (error) {
+    console.error(`Error in /test endpoint: ${error}`);
+    res.status(500).send({ error: "An error occurred while processing your request." });
+  }
 });
 
 // anything else falls to this "not found" case
