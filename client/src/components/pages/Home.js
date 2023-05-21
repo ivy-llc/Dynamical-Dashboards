@@ -14,7 +14,9 @@ function framework_map(framework_version) {
     torch: "PyTorch",
     jax: "JAX",
     tensorflow: "TensorFlow",
+    paddle: "PaddlePaddle",
   };
+
   lst[0] = framework_map[lst[0]];
   for (const str of lst) {
     lst_capitalized.push(str.charAt(0).toUpperCase() + str.slice(1));
@@ -118,6 +120,7 @@ class Home extends Component {
       "numpy/1.24.1",
       "numpy/1.24.2",
     ];
+    this.paddle_versions = ["paddle/latest-stable"];
     this.jax_versions = ["jax/latest-stable"];
     for (const jax_ver of this.jax_only_versions) {
       for (const jaxlib_ver of this.jaxlib_versions) {
@@ -127,7 +130,8 @@ class Home extends Component {
     this.backend_versions = this.torch_versions.concat(
       this.tensorflow_versions,
       this.jax_versions,
-      this.numpy_versions
+      this.numpy_versions,
+      this.paddle_versions
     );
     this.frontend_versions = this.backend_versions;
 
@@ -140,6 +144,7 @@ class Home extends Component {
       "torch",
       "jax",
       "numpy",
+      "paddle",
       "exp_core",
       "exp_nn",
       "misc",
@@ -153,11 +158,11 @@ class Home extends Component {
       torch: "PyTorch Frontend",
       jax: "JAX Frontend",
       numpy: "NumPy Frontend",
+      paddle: "PaddlePaddle Frontend",
       exp_core: "Experimental Core",
       exp_nn: "Experimental NN",
       misc: "Miscellaneous",
     };
-    this.backends = ["numpy", "torch", "jax", "tensorflow"];
     this.handleSubmoduleChange = this.handleSubmoduleChange.bind(this);
     this.handleModuleChange = this.handleModuleChange.bind(this);
     this.handleBackendChange = this.handleBackendChange.bind(this);
@@ -214,7 +219,8 @@ class Home extends Component {
           submodule != "numpy" &&
           submodule != "jax" &&
           submodule != "torch" &&
-          submodule != "tensorflow"
+          submodule != "tensorflow" &&
+          submodule != "paddle"
         ) {
           console.log(submodule);
           mod_submods.push(submodule);
@@ -241,7 +247,8 @@ class Home extends Component {
       this.state.module == "jax" ||
       this.state.module == "numpy" ||
       this.state.module == "tensorflow" ||
-      this.state.module == "torch"
+      this.state.module == "torch" ||
+      this.state.module == "paddle"
     ) {
       let frontend_vers = [];
       for (var version in this.dashboard_data[this.state.submodule][this.state.backend + "\n"][
