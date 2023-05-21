@@ -149,7 +149,13 @@ router.get("/test", async (req, res) => {
     const db = mongoose.connection.db;
     const collection = db.collection(module);
     let key = "";
-    if (module == "jax" || module == "numpy" || module == "torch" || module == "tensorflow") {
+    if (
+      module == "jax" ||
+      module == "numpy" ||
+      module == "torch" ||
+      module == "tensorflow" ||
+      module == "paddle"
+    ) {
       key = submodule + "." + backend + "\n.latest-stable.latest-stable." + test;
     } else {
       key = submodule + "." + backend + "\n.latest-stable." + test;
