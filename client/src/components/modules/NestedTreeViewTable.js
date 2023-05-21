@@ -45,7 +45,11 @@ const NestedTreeViewTable = ({ data, module }) => {
   };
 
   const headings =
-    module == "jax" || module == "numpy" || module == "torch" || module == "tensorflow"
+    module == "jax" ||
+    module == "numpy" ||
+    module == "torch" ||
+    module == "tensorflow" ||
+    module == "paddle"
       ? ["Submodule", "Backend", "Backend Version", "Frontend Version", "Test"]
       : ["Submodule", "Backend", "Backend Version", "Test"];
 
