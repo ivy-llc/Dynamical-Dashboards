@@ -24,13 +24,33 @@ function getLeafValues(obj) {
 const NestedTreeViewTable = ({ data, module }) => {
   const [expandedKeys, setExpandedKeys] = useState(new Set());
 
-  const toggleExpand = (key) => {
+  const toggleExpand = (key, data) => {
     const newExpandedKeys = new Set(expandedKeys);
+
+    const traverse = (currentKey, currentData) => {
+      // Add current key to expanded keys
+      if (!newExpandedKeys.has(currentKey)) {
+        newExpandedKeys.add(currentKey);
+      }
+
+      // Check if the data is an object and has only one child
+      if (
+        typeof currentData === "object" &&
+        currentData !== null &&
+        Object.keys(currentData).length === 1
+      ) {
+        const newKey = `${currentKey}.${Object.keys(currentData)[0]}`;
+        const newData = currentData[Object.keys(currentData)[0]];
+        traverse(newKey, newData);
+      }
+    };
+
     if (expandedKeys.has(key)) {
       newExpandedKeys.delete(key);
     } else {
-      newExpandedKeys.add(key);
+      traverse(key, data);
     }
+
     setExpandedKeys(newExpandedKeys);
   };
 
@@ -66,7 +86,7 @@ const NestedTreeViewTable = ({ data, module }) => {
             <td
               style={{ paddingLeft: `${10 + (isObject ? level * 20 : 20 + level * 20)}px` }}
               className={`tree-node ${isObject ? "expandable" : ""} ${isExpanded ? "open" : ""}`}
-              onClick={() => isObject && toggleExpand(currentKey)}
+              onClick={() => isObject && toggleExpand(currentKey, obj[key])}
             >
               {key}
             </td>
