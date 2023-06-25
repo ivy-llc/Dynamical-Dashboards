@@ -268,10 +268,20 @@ class Home extends Component {
     if (event) {
       event.preventDefault();
     }
+    let backend = this.state.backend;
+    if (!backend || backend.length === 0) {
+      backend = [
+        { value: "torch/latest-stable" },
+        { value: "tensorflow/latest-stable" },
+        { value: "numpy/latest-stable" },
+        { value: "jax/latest-stable" },
+        { value: "paddle/latest-stable" },
+      ];
+    }
     get("/api/data", {
       module: this.state.module,
       submodules: this.state.submodule,
-      backends: this.state.backend,
+      backends: backend,
       frontends: this.state.frontend,
     }).then((data) => {
       this.setState({ dashboard: data });
