@@ -56,11 +56,19 @@ const NestedTreeViewTable = ({ data, module }) => {
 
   const computeAggregateValue = (obj) => {
     const values = getLeafValues(obj);
+    const totalTests = values.length;
+    const passingTests = values.filter((value) => value.includes("success")).length;
 
-    if (values.length != 0 && values.every((value) => value.includes("success"))) {
-      return '<img src="https://img.shields.io/badge/-success-success" />';
+    if (totalTests !== 0) {
+      const successPercentage = (passingTests / totalTests) * 100;
+      return `<div>
+              <div>${passingTests}/${totalTests}</div>
+              <div style="width: 100%; height: 10px; background-color: red;">
+                <div style="width: ${successPercentage}%; height: 100%; background-color: green;"></div>
+              </div>
+            </div>`;
     } else {
-      return '<img src="https://img.shields.io/badge/-failure-red" />';
+      return "";
     }
   };
 
