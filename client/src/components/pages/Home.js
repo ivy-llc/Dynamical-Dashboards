@@ -5,6 +5,9 @@ import "./Home.css";
 import { get } from "jquery";
 import CustomSelect from "../modules/Select";
 import NestedTreeViewTable from "../modules/NestedTreeViewTable";
+
+const FRONTEND_MODULES = ["numpy", "torch", "tensorflow", "paddle", "jax"];
+
 function framework_map(framework_version) {
   var lst = framework_version.split("/");
   var lst_capitalized = [];
@@ -316,12 +319,14 @@ class Home extends Component {
                 name="Backend"
               />
 
-              <CustomSelect
-                value={this.state.frontend}
-                handleChange={this.handleFrontendChange}
-                options={this.frontend_versions.map(fw_map)}
-                name="Frontend"
-              />
+              {FRONTEND_MODULES.includes(this.state.module) ? (
+                <CustomSelect
+                  value={this.state.frontend}
+                  handleChange={this.handleFrontendChange}
+                  options={this.frontend_versions.map(fw_map)}
+                  name="Frontend"
+                />
+              ) : null}
 
               <input type="submit" value="Submit" />
             </form>
