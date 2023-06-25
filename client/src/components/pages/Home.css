@@ -110,6 +110,11 @@ input[type="reset"] {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
 
+.Home-error {
+  color: red;
+  margin-left: 5px;
+}
+
 /* th {
   background-color: #006100;
   color: #ffffff;
