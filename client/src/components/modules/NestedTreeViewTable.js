@@ -64,12 +64,11 @@ const NestedTreeViewTable = ({ data, module }) => {
         <React.Fragment key={currentKey}>
           <tr className={`level-${level}`}>
             <td
+              style={{ paddingLeft: `${10 + (isObject ? level * 20 : 20 + level * 20)}px` }}
               className={`tree-node ${isObject ? "expandable" : ""} ${isExpanded ? "open" : ""}`}
               onClick={() => isObject && toggleExpand(currentKey)}
             >
-              <span style={{ paddingLeft: `${isObject ? level * 20 : 20 + level * 20}px` }}>
-                {key}
-              </span>
+              {key}
             </td>
             <td>
               <div dangerouslySetInnerHTML={{ __html: aggregateValue }}></div>
