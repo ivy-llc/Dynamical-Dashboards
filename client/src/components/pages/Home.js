@@ -64,6 +64,8 @@ class Home extends Component {
         ? this.props.frontend.replace(/:/g, "/").replace(/_/g, ".").split(",").map(fw_map)
         : [],
       dashboard: [],
+      subModvalidationError: "",
+      moduleValidationError: "",
     };
     if (this.props.module) {
       this.handleModuleChange({ target: { value: this.props.module } });
@@ -213,7 +215,7 @@ class Home extends Component {
   }
 
   handleModuleChange(event) {
-    this.setState({ module: event.target.value });
+    this.setState({ module: event.target.value, moduleValidationError: "" });
     get("/api/submodules", { module: event.target.value }).then((submodules) => {
       let mod_submods = [];
       for (var submodule of submodules) {
@@ -236,7 +238,7 @@ class Home extends Component {
   }
 
   handleSubmoduleChange(event) {
-    this.setState({ submodule: event });
+    this.setState({ submodule: event, subModvalidationError: "" });
   }
 
   handleBackendChange(event) {
@@ -271,6 +273,16 @@ class Home extends Component {
     if (event) {
       event.preventDefault();
     }
+    if (!this.state.module) {
+      this.setState({ moduleValidationError: "Please select a module" });
+      return;
+    }
+
+    if (!this.state.submodule || this.state.submodule.length === 0) {
+      this.setState({ subModvalidationError: "Please select atleast one submodule" });
+      return;
+    }
+
     let backend = this.state.backend;
     if (!backend || backend.length === 0) {
       backend = [
@@ -305,6 +317,9 @@ class Home extends Component {
                   ))}
                 </select>
               </div>
+              {this.state.moduleValidationError && (
+                <div className="Home-error">{this.state.moduleValidationError}</div>
+              )}
               <CustomSelect
                 value={this.state.submodule}
                 handleChange={this.handleSubmoduleChange}
@@ -312,6 +327,9 @@ class Home extends Component {
                 name="Submodule"
               />
 
+              {this.state.subModvalidationError && (
+                <div className="Home-error">{this.state.subModvalidationError}</div>
+              )}
               <CustomSelect
                 value={this.state.backend}
                 handleChange={this.handleBackendChange}
