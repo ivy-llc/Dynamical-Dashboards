@@ -323,7 +323,9 @@ class Home extends Component {
                 <CustomSelect
                   value={this.state.frontend}
                   handleChange={this.handleFrontendChange}
-                  options={this.frontend_versions.map(fw_map)}
+                  options={this.frontend_versions
+                    .filter((item) => item.startsWith(this.state.module))
+                    .map(fw_map)}
                   name="Frontend"
                 />
               ) : null}
