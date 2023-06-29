@@ -77,54 +77,61 @@ async function getFilteredData(collection, keys) {
 }
 
 router.get("/data", (req, res) => {
-  const db = mongoose.connection.db;
-  const collection = db.collection(req.query.module);
-  console.log(req.query.submodules);
-  console.log(req.query.backends);
-  console.log(req.query.frontends);
+  try {
+    const db = mongoose.connection.db;
+    const collection = db.collection(req.query.module);
+    console.log(req.query.module);
+    console.log(req.query.submodules);
+    console.log(req.query.backends);
+    console.log(req.query.frontends);
 
-  submodules = req.query.submodules.map((submodule) => submodule.value);
-  backends = req.query.backends.map((backend) => {
-    var str = backend.value;
-    const slashIndex = str.indexOf("/");
-    var backend_name = str.substring(0, slashIndex);
-    if (req.query.module !== "array_api") backend_name += "\n";
-    let backend_version = str.substring(slashIndex + 1);
-    backend_version = backend_version.replace(/\./g, "_");
-    return backend_name + "." + backend_version;
-  });
-  const keys = [];
-  if (req.query.frontends) {
-    frontends = req.query.frontends.map((frontend) => {
-      let str = frontend.value;
-      const slashIndex = str.indexOf("/");
-      let frontend_version = str.substring(slashIndex + 1);
-      return frontend_version.replace(/\./g, "_");
-    });
-    submodules.forEach((submodule) => {
-      backends.forEach((backend) => {
-        frontends.forEach((frontend) => {
-          const key = submodule + "." + backend + "." + frontend;
-          keys.push(key);
+    const keys = [];
+    if (req.query.submodules) {
+      submodules = req.query.submodules.map((submodule) => submodule.value);
+      backends = req.query.backends.map((backend) => {
+        var str = backend.value;
+        const slashIndex = str.indexOf("/");
+        var backend_name = str.substring(0, slashIndex);
+        if (req.query.module !== "array_api") backend_name += "\n";
+        let backend_version = str.substring(slashIndex + 1);
+        backend_version = backend_version.replace(/\./g, "_");
+        return backend_name + "." + backend_version;
+      });
+      if (req.query.frontends) {
+        frontends = req.query.frontends.map((frontend) => {
+          let str = frontend.value;
+          const slashIndex = str.indexOf("/");
+          let frontend_version = str.substring(slashIndex + 1);
+          return frontend_version.replace(/\./g, "_");
         });
-      });
+        submodules.forEach((submodule) => {
+          backends.forEach((backend) => {
+            frontends.forEach((frontend) => {
+              const key = submodule + "." + backend + "." + frontend;
+              keys.push(key);
+            });
+          });
+        });
+      } else {
+        submodules.forEach((submodule) => {
+          backends.forEach((backend) => {
+            const key = submodule + "." + backend;
+            keys.push(key);
+          });
+        });
+      }
+    }
+    console.log(keys);
+
+    // Fetch the filtered data
+    getFilteredData(collection, keys).then((filteredData) => {
+      console.log(filteredData);
+      res.send(filteredData);
     });
-  } else {
-    submodules.forEach((submodule) => {
-      backends.forEach((backend) => {
-        const key = submodule + "." + backend;
-        keys.push(key);
-      });
-    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error retrieving data");
   }
-
-  console.log(keys);
-
-  // Fetch the filtered data
-  getFilteredData(collection, keys).then((filteredData) => {
-    console.log(filteredData);
-    res.send(filteredData);
-  });
 });
 
 router.get("/test", async (req, res) => {
