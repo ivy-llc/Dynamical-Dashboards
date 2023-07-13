@@ -63,9 +63,10 @@ class Home extends Component {
       frontend: this.props.frontend
         ? this.props.frontend.replace(/:/g, "/").replace(/_/g, ".").split(",").map(fw_map)
         : [],
-      dashboard: [],
+      dashboards: [],
       subModvalidationError: "",
       moduleValidationError: "",
+      isSubmitted: false,
     };
     if (this.props.module) {
       this.handleModuleChange({ target: { value: this.props.module } });
@@ -74,8 +75,14 @@ class Home extends Component {
       this.handleSubmit();
     }
     this.dashboard_data = {};
-    this.torch_versions = [
+    this.latest_stable_versions = [
       "torch/latest-stable",
+      "tensorflow/latest-stable",
+      "numpy/latest-stable",
+      "jax/latest-stable",
+      "paddle/latest-stable",
+    ];
+    this.torch_versions = [
       "torch/1.4.0",
       "torch/1.5.0",
       "torch/1.10.1",
@@ -86,7 +93,6 @@ class Home extends Component {
       "torch/1.13.0",
     ];
     this.tensorflow_versions = [
-      "tensorflow/latest-stable",
       "tensorflow/2.2.0",
       "tensorflow/2.2.1",
       "tensorflow/2.2.2",
@@ -117,7 +123,6 @@ class Home extends Component {
       "jaxlib/0.3.22",
     ];
     this.numpy_versions = [
-      "numpy/latest-stable",
       "numpy/1.17.3",
       "numpy/1.17.4",
       "numpy/1.23.1",
@@ -125,14 +130,15 @@ class Home extends Component {
       "numpy/1.24.1",
       "numpy/1.24.2",
     ];
-    this.paddle_versions = ["paddle/latest-stable"];
-    this.jax_versions = ["jax/latest-stable"];
+    this.paddle_versions = [];
+    this.jax_versions = [];
     for (const jax_ver of this.jax_only_versions) {
       for (const jaxlib_ver of this.jaxlib_versions) {
         this.jax_versions.push(jax_ver + "/" + jaxlib_ver);
       }
     }
-    this.backend_versions = this.torch_versions.concat(
+    this.backend_versions = this.latest_stable_versions.concat(
+      this.torch_versions,
       this.tensorflow_versions,
       this.jax_versions,
       this.numpy_versions,
@@ -174,6 +180,13 @@ class Home extends Component {
     this.handleBackendVersionChange = this.handleBackendVersionChange.bind(this);
     this.handleFrontendChange = this.handleFrontendChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  componentDidMount() {
+    if (!this.props.submodule) {
+      get("/api/all").then((data) => {
+        if (!this.state.isSubmitted) this.setState({ dashboards: data });
+      });
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -273,6 +286,7 @@ class Home extends Component {
     if (event) {
       event.preventDefault();
     }
+    this.setState({ isSubmitted: true });
     if (!this.state.module) {
       this.setState({ moduleValidationError: "Please select a module" });
       return;
@@ -299,7 +313,7 @@ class Home extends Component {
       backends: backend,
       frontends: this.state.frontend,
     }).then((data) => {
-      this.setState({ dashboard: data });
+      this.setState({ dashboards: [{ dashboard: data, module: this.state.module }] });
     });
   }
 
@@ -352,7 +366,16 @@ class Home extends Component {
             </form>
           </div>
 
-          <NestedTreeViewTable data={this.state.dashboard} module={this.state.module} />
+          <div className="Home-dashboards">
+            {this.state.dashboards.map((item) => (
+              <NestedTreeViewTable
+                data={item.dashboard}
+                module={item.module}
+                display_module={this.state.dashboards.length > 1}
+                module_map={this.module_map}
+              />
+            ))}
+          </div>
         </div>
       </>
     );
