@@ -26,6 +26,8 @@ const session = require("express-session"); // library that stores info about ea
 const mongoose = require("mongoose"); // library to connect to MongoDB
 const path = require("path"); // provide utilities for working with file and directory paths
 require("dotenv").config();
+let cache = require("./cache");
+const CACHE_DURATION = 3600000; // 1 hour in milliseconds
 const api = require("./api");
 const auth = require("./auth");
 
@@ -38,21 +40,56 @@ const mongoConnectionURL = process.env.ATLAS_SRV;
 // TODO change database name to the name you chose
 const databaseName = "Ivy_tests_multi";
 
+async function fetchData() {
+  const db = mongoose.connection.db;
+  console.log("Retrieving Data for all Modules");
+
+  let collections = await db.listCollections().toArray();
+  // collections = collections.slice(0, 2);
+
+  let allData = [];
+  for (let collectionInfo of collections) {
+    const collection = db.collection(collectionInfo.name);
+    const data = await collection.findOne({});
+    delete data._id;
+    console.log("Retrieved Data for", collectionInfo.name);
+    allData.push({ module: collectionInfo.name, dashboard: data });
+  }
+  return allData;
+}
+
 // connect to mongodb
-connectdb = () => {
+connectdb = async () => {
   mongoose
     .connect(mongoConnectionURL, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       dbName: databaseName,
     })
-    .then(() => console.log("Connected to MongoDB"))
+    .then(() => {
+      console.log("Connected to MongoDB");
+      fetchData().then((data) => {
+        cache.setCache(data);
+      });
+    })
     .catch((err) => {
       console.log("Unable To Connect");
       connectdb();
     });
 };
 connectdb();
+
+// Fetch new data every hour.
+setInterval(() => {
+  fetchData()
+    .then((data) => {
+      cache.setCache(data);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+}, CACHE_DURATION);
+
 // create a new express server
 const app = express();
 
