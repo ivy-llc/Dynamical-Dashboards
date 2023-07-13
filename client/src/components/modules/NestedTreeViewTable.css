@@ -1,5 +1,5 @@
 .tree-view-table {
-  width: 50%;
+  width: 75%;
   margin: 25px;
   border-collapse: collapse;
   font-family: "Poppins", sans-serif;
@@ -62,4 +62,13 @@
 .tree-view-table tbody td {
   height: auto;
   white-space: nowrap;
+}
+
+.module-title {
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 10px;
+  font-size: 24px;
+  color: #333;
+  border-bottom: 1px solid #ddd;
 }
