@@ -8,6 +8,11 @@
   flex-basis: 30vw;
 }
 
+.Home-dashboards {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
 .Home-select {
   margin: 10px;
 }
