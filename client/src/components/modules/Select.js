@@ -12,6 +12,10 @@ class CustomSelect extends Component {
     if (selected.some((s) => s.value === "select-all")) {
       // Select all
       this.props.handleChange(this.props.options);
+    } else if (selected.some((s) => s.value === "select-latest")) {
+      this.props.handleChange(
+        this.props.options.filter((item) => item.value.includes("latest-stable"))
+      );
     } else {
       // Regular selection
       this.props.handleChange(selected);
@@ -19,9 +23,13 @@ class CustomSelect extends Component {
   };
 
   render() {
-    let options = [{ value: "select-all", label: "Select All" }, ...this.props.options];
+    let options =
+      this.props.name == "Submodule"
+        ? [{ value: "select-all", label: "Select All" }, ...this.props.options]
+        : [{ value: "select-latest", label: "Select Latest Stable" }, ...this.props.options];
     return (
       <Select
+        closeMenuOnSelect={false}
         isMulti={true}
         value={this.props.value}
         onChange={this.handleOnChange}
