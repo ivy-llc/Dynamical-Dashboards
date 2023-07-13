@@ -21,7 +21,7 @@ function getLeafValues(obj) {
   return values;
 }
 
-const NestedTreeViewTable = ({ data, module }) => {
+const NestedTreeViewTable = ({ data, module, display_module, module_map }) => {
   const [expandedKeys, setExpandedKeys] = useState(new Set());
 
   const toggleExpand = (key, data) => {
@@ -116,15 +116,24 @@ const NestedTreeViewTable = ({ data, module }) => {
   };
 
   return (
-    <table className="tree-view-table">
-      <thead>
-        <tr>
-          <th>{headings[0]}</th>
-          <th>Result</th>
-        </tr>
-      </thead>
-      <tbody>{renderTable(data)}</tbody>
-    </table>
+    <>
+      <table className="tree-view-table">
+        <thead>
+          {display_module ? (
+            <tr>
+              <th colSpan={2}>
+                <b>{module_map[module]}</b>
+              </th>
+            </tr>
+          ) : null}
+          <tr>
+            <th>{headings[0]}</th>
+            <th>Result</th>
+          </tr>
+        </thead>
+        <tbody>{renderTable(data)}</tbody>
+      </table>
+    </>
   );
 };
 
