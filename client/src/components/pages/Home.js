@@ -182,7 +182,7 @@ class Home extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
   componentDidMount() {
-    if (!this.props.submodule) {
+    if (!this.props.module) {
       get("/api/all").then((data) => {
         if (!this.state.isSubmitted) this.setState({ dashboards: data });
       });
