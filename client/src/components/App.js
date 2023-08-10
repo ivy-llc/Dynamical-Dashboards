@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import NavBar from "./modules/NavBar.js";
 import { Router } from "@reach/router";
 import Home from "./pages/Home.js";
+import Priority from "./pages/Priority.js";
 import NotFound from "./pages/NotFound.js";
 
 import "../utilities.css";
@@ -28,6 +29,7 @@ class App extends Component {
             <Home path="/:module/:submodule" backend={null} frontend={null} />
             <Home path="/:module/:submodule/:backend" frontend={null} />
             <Home path="/:module/:submodule/:backend/:frontend" />
+            <Priority path="/priority" />
             <NotFound default />
           </Router>
         </div>
