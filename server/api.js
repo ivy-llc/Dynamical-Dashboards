@@ -14,7 +14,7 @@ const Question = require("./models/question");
 // import authentication library
 const auth = require("./auth");
 const cache = require("./cache");
-
+const priority = require("./priority");
 // api endpoints: all these paths will be prefixed with "/api/"
 const router = express.Router();
 
@@ -168,49 +168,32 @@ router.get("/test", async (req, res) => {
   }
 });
 
-// const cache = new Map(); // Simple in-memory cache for demonstration. Consider using something more robust for production.
-
-// router.get("/all", async (req, res) => {
-//   try {
-//     // Use cached data if available.
-//     if (cache.has("/all")) {
-//       return res.send(cache.get("/all"));
-//     }
-
-//     const db = mongoose.connection.db;
-//     console.log("Retrieving Data for all Modules");
-//     // Get a list of all collections.
-//     let collections = await db.listCollections().toArray();
-//     collections = collections.slice(0, 2);
-//     // Retrieve data from all collections.
-//     let allData = [];
-//     for (let collectionInfo of collections) {
-//       const collection = db.collection(collectionInfo.name);
-//       // Get the first document from each collection.
-//       const data = await collection.findOne({});
-//       delete data._id;
-//       console.log(data);
-//       allData.push({ module: collectionInfo.name, dashboard: data });
-//     }
-//     console.log("Caching Data");
-
-//     // Cache the data.
-//     cache.set("/all", allData);
-//     // Set a timeout to clear the cache after some time (e.g., 1 hour).
-//     setTimeout(() => cache.delete("/all"), 3600000);
-
-//     res.send(allData);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send("Error retrieving data");
-//   }
-// });
-
 router.get("/all", async (req, res) => {
   try {
     console.log(cache.getCache());
     // Always serve data from cache, even if it's technically expired.
     res.send(cache.getCache());
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error retrieving data");
+  }
+});
+
+router.get("/priority", async (req, res) => {
+  try {
+    const db = priority.getConnection().db;
+    console.log("Retrieving Data for all Modules");
+
+    let collections = await db.listCollections().toArray();
+    let allData = [];
+    for (let collectionInfo of collections) {
+      const collection = db.collection(collectionInfo.name);
+      const data = await collection.findOne({});
+      delete data._id;
+      console.log("Retrieved Data for", collectionInfo.name);
+      allData.push({ module: collectionInfo.name, dashboard: data });
+    }
+    res.send(allData);
   } catch (err) {
     console.error(err);
     res.status(500).send("Error retrieving data");
