@@ -30,16 +30,15 @@ let cache = require("./cache");
 const CACHE_DURATION = 3600000; // 1 hour in milliseconds
 const api = require("./api");
 const auth = require("./auth");
+const priority = require("./priority");
 
 // socket stuff
 const socket = require("./server-socket");
 
 // Server configuration below
-// TODO change connection URL after setting up your own database
 const mongoConnectionURL = process.env.ATLAS_SRV;
-// TODO change database name to the name you chose
 const databaseName = "Ivy_tests_multi";
-
+const priorityDBName = "Ivy_tests_priority";
 async function fetchData() {
   const db = mongoose.connection.db;
   console.log("Retrieving Data for all Modules");
@@ -78,6 +77,25 @@ connectdb = async () => {
     });
 };
 connectdb();
+let priority_connection_;
+
+connectPriority = async () => {
+  try {
+    priority_connection_ = await mongoose.createConnection(mongoConnectionURL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      dbName: priorityDBName,
+    });
+    console.log(priority.getConnection());
+    priority.setConnection(priority_connection_);
+    console.log(priority.getConnection());
+    console.log("Connected to Priority DB");
+  } catch (err) {
+    console.log("Unable to Connect:", err);
+    connectPriority();
+  }
+};
+connectPriority();
 
 // Fetch new data every hour.
 setInterval(() => {
