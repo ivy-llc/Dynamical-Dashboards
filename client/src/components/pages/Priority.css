@@ -1,0 +1,8 @@
+.Priority-dashboards {
+  width: 100%; /* Set to the desired width */
+  max-width: 800px; /* For example, to limit the container width */
+  margin-left: auto; /* Centers the container */
+  margin-right: auto;
+  overflow-y: auto; /* Allows vertical scrolling if the table is too long */
+  padding: 10px; /* Space around the table */
+}
