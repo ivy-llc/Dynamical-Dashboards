@@ -21,7 +21,7 @@ function getLeafValues(obj) {
   return values;
 }
 
-const NestedTreeViewTable = ({ data, module, display_module, module_map }) => {
+const NestedTreeViewTable = ({ data, module, display_module, module_map, with_device = false }) => {
   const [expandedKeys, setExpandedKeys] = useState(new Set());
 
   const toggleExpand = (key, data) => {
@@ -72,7 +72,7 @@ const NestedTreeViewTable = ({ data, module, display_module, module_map }) => {
     }
   };
 
-  const headings =
+  let headings =
     module == "jax" ||
     module == "numpy" ||
     module == "torch" ||
@@ -81,6 +81,9 @@ const NestedTreeViewTable = ({ data, module, display_module, module_map }) => {
       ? ["Submodule", "Backend", "Backend Version", "Frontend Version", "Test"]
       : ["Submodule", "Backend", "Backend Version", "Test"];
 
+  if (with_device) {
+    headings.push("Device");
+  }
   const renderTable = (obj, level = 0, parentKey = "") => {
     return Object.keys(obj).map((key) => {
       const isObject = typeof obj[key] === "object" && obj[key] !== null;
