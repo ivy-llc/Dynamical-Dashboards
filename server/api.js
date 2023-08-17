@@ -156,6 +156,8 @@ router.get("/test", async (req, res) => {
     } else {
       key = submodule + "." + backend + "\n.latest-stable." + test;
     }
+    key += ".cpu";
+    console.log(key);
     const keys = [key];
     const filteredData = await getFilteredData(collection, keys);
     const result_badge =
