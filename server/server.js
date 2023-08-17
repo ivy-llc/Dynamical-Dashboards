@@ -37,7 +37,7 @@ const socket = require("./server-socket");
 
 // Server configuration below
 const mongoConnectionURL = process.env.ATLAS_SRV;
-const databaseName = "Ivy_tests_multi";
+const databaseName = "Ivy_tests_multi_gpu";
 const priorityDBName = "Ivy_tests_priority";
 async function fetchData() {
   const db = mongoose.connection.db;
