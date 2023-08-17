@@ -373,6 +373,7 @@ class Home extends Component {
                 module={item.module}
                 display_module={this.state.dashboards.length > 1}
                 module_map={this.module_map}
+                with_device={true}
               />
             ))}
           </div>
