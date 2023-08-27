@@ -44,6 +44,12 @@ const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const REPO_OWNER = "unifyai";
 const REPO_NAME = "ivy";
 const FIXED_LABEL = "ToDo";
+
+const countTasksNotCompleted = (body) => {
+  const matches = body.match(/^\s*- \[ \]/gm);
+  return matches ? matches.length : 0;
+};
+
 const fetchIssues = async (inputLabel) => {
   try {
     const labelsToFetch = [FIXED_LABEL, inputLabel];
@@ -62,7 +68,13 @@ const fetchIssues = async (inputLabel) => {
     );
 
     const issues = response.data;
-    return issues;
+    let total = 0;
+    issues.forEach((issue) => {
+      const count = countTasksNotCompleted(issue.body);
+      total += count;
+      // console.log(`Title: ${issue.title}, URL: ${issue.html_url}, Uncompleted Tasks: ${count}`);
+    });
+    return total;
   } catch (error) {
     console.error("Error fetching issues:", error.response ? error.response.data : error.message);
   }
