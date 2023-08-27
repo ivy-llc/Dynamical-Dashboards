@@ -44,6 +44,14 @@ const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const REPO_OWNER = "unifyai";
 const REPO_NAME = "ivy";
 const FIXED_LABEL = "ToDo";
+const LABEL_MAP = {
+  jax: "JAX Frontend",
+  torch: "PyTorch Frontend",
+  tensorflow: "TensorFlow Frontend",
+  numpy: "NumPy Frontend",
+  paddle: "Paddle Frontend",
+  stateful: "Ivy Stateful API",
+};
 
 const countTasksNotCompleted = (body) => {
   const matches = body.match(/^\s*- \[ \]/gm);
@@ -88,14 +96,21 @@ async function fetchData() {
   // collections = collections.slice(0, 2);
 
   let allData = [];
+  let notImplementedCount = [];
   for (let collectionInfo of collections) {
     const collection = db.collection(collectionInfo.name);
     const data = await collection.findOne({});
     delete data._id;
     console.log("Retrieved Data for", collectionInfo.name);
     allData.push({ module: collectionInfo.name, dashboard: data });
+    console.log(collectionInfo.name);
+    if (collectionInfo.name in LABEL_MAP) {
+      numIssues = await fetchIssues(LABEL_MAP[collectionInfo.name]);
+      notImplementedCount.push({ module: collectionInfo.name, count: numIssues });
+    }
   }
-  return allData;
+  console.log("Not Implemented Count", notImplementedCount);
+  return { dashboard: allData, notImplementedCount: notImplementedCount };
 }
 
 // connect to mongodb
