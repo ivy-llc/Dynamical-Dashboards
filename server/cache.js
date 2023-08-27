@@ -1,6 +1,6 @@
 // The cache object should store both the data and the timestamp of when it was fetched.
 let cache = {
-  data: [],
+  data: {},
   fetchTimestamp: null,
 };
 
