@@ -17,7 +17,7 @@
 // this is a tool provided by staff, so you don't need to worry about it
 const validator = require("./validator");
 validator.checkSetup();
-
+const axios = require("axios");
 //import libraries needed for the webserver to work!
 const http = require("http");
 const bodyParser = require("body-parser"); // allow node to automatically parse POST body requests as JSON
@@ -39,6 +39,35 @@ const socket = require("./server-socket");
 const mongoConnectionURL = process.env.ATLAS_SRV;
 const databaseName = "Ivy_tests_multi_gpu";
 const priorityDBName = "Ivy_tests_priority";
+
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const REPO_OWNER = "unifyai";
+const REPO_NAME = "ivy";
+const FIXED_LABEL = "ToDo";
+const fetchIssues = async (inputLabel) => {
+  try {
+    const labelsToFetch = [FIXED_LABEL, inputLabel];
+    const response = await axios.get(
+      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues`,
+      {
+        headers: {
+          Authorization: `token ${GITHUB_TOKEN}`,
+          Accept: "application/vnd.github.v3+json",
+        },
+        params: {
+          labels: labelsToFetch.join(),
+          state: "open",
+        },
+      }
+    );
+
+    const issues = response.data;
+    return issues;
+  } catch (error) {
+    console.error("Error fetching issues:", error.response ? error.response.data : error.message);
+  }
+};
+
 async function fetchData() {
   const db = mongoose.connection.db;
   console.log("Retrieving Data for all Modules");
