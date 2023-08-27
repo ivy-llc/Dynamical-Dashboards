@@ -64,6 +64,7 @@ class Home extends Component {
         ? this.props.frontend.replace(/:/g, "/").replace(/_/g, ".").split(",").map(fw_map)
         : [],
       dashboards: [],
+      notImplementedCount: {},
       subModvalidationError: "",
       moduleValidationError: "",
       isSubmitted: false,
@@ -184,7 +185,11 @@ class Home extends Component {
   componentDidMount() {
     if (!this.props.module) {
       get("/api/all").then((data) => {
-        if (!this.state.isSubmitted) this.setState({ dashboards: data });
+        if (!this.state.isSubmitted)
+          this.setState({
+            dashboards: data.dashboard,
+            notImplementedCount: data.notImplementedCount,
+          });
       });
     }
   }
