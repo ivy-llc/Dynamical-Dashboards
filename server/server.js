@@ -96,7 +96,7 @@ async function fetchData() {
   // collections = collections.slice(0, 2);
 
   let allData = [];
-  let notImplementedCount = [];
+  let notImplementedCount = {};
   for (let collectionInfo of collections) {
     const collection = db.collection(collectionInfo.name);
     const data = await collection.findOne({});
@@ -106,7 +106,7 @@ async function fetchData() {
     console.log(collectionInfo.name);
     if (collectionInfo.name in LABEL_MAP) {
       numIssues = await fetchIssues(LABEL_MAP[collectionInfo.name]);
-      notImplementedCount.push({ module: collectionInfo.name, count: numIssues });
+      notImplementedCount[collectionInfo.name] = numIssues;
     }
   }
   console.log("Not Implemented Count", notImplementedCount);
