@@ -31,6 +31,20 @@ const NestedTreeViewTable = ({
 }) => {
   const [expandedKeys, setExpandedKeys] = useState(new Set());
 
+  const countTestKeys = (obj) => {
+    if (typeof obj !== "object" || obj === null) {
+      return 0;
+    }
+    let count = 0;
+    Object.keys(obj).forEach((key) => {
+      if (key.startsWith("test_")) {
+        count += 1;
+      }
+      count += countTestKeys(obj[key]);
+    });
+    return count;
+  };
+
   const toggleExpand = (key, data) => {
     const newExpandedKeys = new Set(expandedKeys);
 
