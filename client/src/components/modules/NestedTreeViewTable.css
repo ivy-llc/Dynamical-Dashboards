@@ -72,3 +72,34 @@
   color: #333;
   border-bottom: 1px solid #ddd;
 }
+
+.NestedTreeViewTable-header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.NestedTreeViewTable-module-name {
+  margin-right: 10px;
+}
+
+.NestedTreeViewTable-progress-container {
+  margin-right: 10px;
+}
+
+.NestedTreeViewTable-test-count {
+  margin-bottom: 5px;
+  text-align: center;
+  font-size: 10px;
+}
+
+.NestedTreeViewTable-progress-bar {
+  width: 100%;
+  height: 10px;
+  background-color: #ff5733;
+}
+
+.NestedTreeViewTable-progress-fill {
+  height: 100%;
+  background-color: #ffc300;
+}
