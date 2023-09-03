@@ -84,6 +84,7 @@
 }
 
 .NestedTreeViewTable-progress-container {
+  width: 400px;
   margin-right: 10px;
 }
 
