@@ -139,6 +139,9 @@ const NestedTreeViewTable = ({
     });
   };
 
+  const totalTestCount = countTestKeys(data);
+  const implementedCount = totalTestCount - (not_implemented_count || 0);
+  const implementedPercentage = (implementedCount / totalTestCount) * 100;
   return (
     <>
       <table className="tree-view-table">
