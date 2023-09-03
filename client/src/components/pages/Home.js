@@ -185,7 +185,7 @@ class Home extends Component {
   componentDidMount() {
     if (!this.props.module) {
       get("/api/all").then((data) => {
-        if (!this.state.isSubmitted)
+        if (!this.state.isSubmitted && data.dashboard !== undefined)
           this.setState({
             dashboards: data.dashboard,
             notImplementedCount: data.notImplementedCount,
@@ -379,7 +379,7 @@ class Home extends Component {
                 display_module={this.state.dashboards.length > 1}
                 module_map={this.module_map}
                 with_device={true}
-                not_implement_count={this.state.notImplementedCount[item.module] || null}
+                not_implemented_count={this.state.notImplementedCount[item.module] || null}
               />
             ))}
           </div>
