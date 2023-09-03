@@ -149,7 +149,22 @@ const NestedTreeViewTable = ({
           {display_module ? (
             <tr>
               <th colSpan={2}>
-                <b>{module_map[module]}</b>
+                <div className="NestedTreeViewTable-header-container">
+                  <b className="NestedTreeViewTable-module-name">{module_map[module]}</b>
+                  {not_implemented_count !== null && (
+                    <div className="NestedTreeViewTable-progress-container">
+                      <div className="NestedTreeViewTable-test-count">
+                        Implemented: {implementedCount} | Not Implemented: {not_implemented_count}
+                      </div>
+                      <div className="NestedTreeViewTable-progress-bar">
+                        <div
+                          className="NestedTreeViewTable-progress-fill"
+                          style={{ width: `${implementedPercentage}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </th>
             </tr>
           ) : null}
