@@ -139,8 +139,8 @@ const NestedTreeViewTable = ({
     });
   };
 
-  const totalTestCount = countTestKeys(data);
-  const implementedCount = totalTestCount - (not_implemented_count || 0);
+  const implementedCount = countTestKeys(data);
+  const totalTestCount = implementedCount + (not_implemented_count || 0);
   const implementedPercentage = (implementedCount / totalTestCount) * 100;
   return (
     <>
