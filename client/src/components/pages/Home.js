@@ -161,6 +161,7 @@ class Home extends Component {
       "pandas",
       "onnx",
       "mindspore",
+      "sklearn",
       "xgboost",
       "exp_core",
       "exp_nn",
@@ -184,6 +185,7 @@ class Home extends Component {
       onnx: "ONNX",
       xgboost: "XGBoost",
       mindspore: "MindSpore Frontend",
+      sklearn: "Scikit-Learn Frontend",
     };
     this.handleSubmoduleChange = this.handleSubmoduleChange.bind(this);
     this.handleModuleChange = this.handleModuleChange.bind(this);
