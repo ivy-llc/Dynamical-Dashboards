@@ -157,6 +157,8 @@ class Home extends Component {
       "jax",
       "numpy",
       "paddle",
+      "scipy",
+
       "exp_core",
       "exp_nn",
       "misc",
@@ -174,6 +176,7 @@ class Home extends Component {
       exp_core: "Experimental Core",
       exp_nn: "Experimental NN",
       misc: "Miscellaneous",
+      scipy: "SciPy Frontend",
     };
     this.handleSubmoduleChange = this.handleSubmoduleChange.bind(this);
     this.handleModuleChange = this.handleModuleChange.bind(this);
