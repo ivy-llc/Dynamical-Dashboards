@@ -31,18 +31,30 @@ const NestedTreeViewTable = ({
 }) => {
   const [expandedKeys, setExpandedKeys] = useState(new Set());
 
-  const countTestKeys = (obj) => {
+  const countSubmoduleTestKeys = (obj, uniqueSet = new Set()) => {
     if (typeof obj !== "object" || obj === null) {
       return 0;
     }
-    let count = 0;
+
     Object.keys(obj).forEach((key) => {
       if (key.startsWith("test_")) {
-        count += 1;
+        uniqueSet.add(key);
       }
-      count += countTestKeys(obj[key]);
+      countSubmoduleTestKeys(obj[key], uniqueSet);
     });
-    return count;
+
+    return uniqueSet.size;
+  };
+
+  const countTestKeys = (obj) => {
+    let totalCount = 0;
+
+    for (const submodule of Object.keys(obj)) {
+      console.log(submodule);
+      totalCount += countSubmoduleTestKeys(obj[submodule]);
+    }
+
+    return totalCount;
   };
 
   const toggleExpand = (key, data) => {
