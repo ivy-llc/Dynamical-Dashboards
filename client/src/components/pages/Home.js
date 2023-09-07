@@ -160,6 +160,7 @@ class Home extends Component {
       "scipy",
       "pandas",
       "onnx",
+      "xgboost",
       "exp_core",
       "exp_nn",
       "misc",
@@ -180,6 +181,7 @@ class Home extends Component {
       scipy: "SciPy Frontend",
       pandas: "Pandas Frontend",
       onnx: "ONNX",
+      xgboost: "XGBoost",
     };
     this.handleSubmoduleChange = this.handleSubmoduleChange.bind(this);
     this.handleModuleChange = this.handleModuleChange.bind(this);
