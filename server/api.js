@@ -202,10 +202,106 @@ router.get("/priority", async (req, res) => {
   }
 });
 
+
+
+// priority dashboard endpoints
+
+const { ScreenShareOutlined } = require("@material-ui/icons");
+
+const { frontendFunctionTestModel, backendFunctionTestModel, demosModel, conn } = require("./priority_models");
+
+router.get("/frontend_functions_tests", async (req, res) => {
+  f = await frontendFunctionTestModel.find()
+  res.send(f);
+})
+
+router.get("/backend_functions_tests", async (req, res) => {
+  f = await backendFunctionTestModel.find()
+  // await demosModel.find()
+  res.send(f);
+})
+
+
+router.get("/demos", async (req, res) => {
+  f = await demosModel.find()
+  res.send(f);
+})
+
+
+
+router.post("/demos", async (req, res) => {
+
+    // const session = await conn.startSession()
+    // console.log(session)
+    // session.withTransaction( async () => {
+      // check if demo already exists
+  
+      // if a demo exists, update it
+  
+  
+      // if not, create a demo
+  
+      try {
+  
+  
+        const demo = new demosModel({
+          _id: req.body["_id"],
+          label: req.body["label"],
+          ivy_functions: req.body["ivy_functions"],
+
+          frontend_functions: req.body["frontend_functions"]
+        })
+    
+        await demo.save()
+    
+        console.log(req.body)
+        // update functions within the demo
+        let response = await backendFunctionTestModel.updateMany({"demos": 
+                                        {"$not":
+                                         {"$elemMatch":
+                                          {"$eq":  req.body["label"]} }},
+                                          
+                                          "_id": {"$in": req.body["ivy_functions"]}},
+                                                {"$push": {"demos": req.body["label"]}})
+                                                
+        
+        
+        response = await frontendFunctionTestModel.updateMany({"demos":
+                                       {"$not":
+                                           {"$elemMatch":
+                                            {"$eq":  req.body["label"]}
+                                           }
+                                          }, "_id": {"$in": req.body["frontend_functions"]}}, {"$push": {"demos": req.body["label"]}})
+
+        console.log(response)              
+
+          
+        // await session.commitTransaction()
+        res.status(200).send({msg: "all good"})
+  
+      }  catch (e) {
+        console.log(e)
+        res.status(403).send({msg: e})
+      }
+    // })  
+
+
+})
+
+
+
+
+
+
+
 // anything else falls to this "not found" case
 router.all("*", (req, res) => {
   console.log(`API route not found: ${req.method} ${req.url}`);
   res.status(404).send({ msg: "API route not found" });
 });
+
+
+
+
 
 module.exports = router;
