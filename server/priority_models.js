@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 
-let conn = mongoose.createConnection("mongodb+srv://deep-ivy:MGhMMamzOTVxskxE@cluster0.qdvf8q3.mongodb.net/?retryWrites=true&w=majority",
+let conn = mongoose.createConnection(process.env.ATLAS_SRV,
 {
     dbName: "ci_dashboard"
 })
