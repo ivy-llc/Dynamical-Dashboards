@@ -11,7 +11,7 @@ const demosSchema = new mongoose.Schema({
     company: String,
     ivy_functions: {type: [String], ref: "ivy_tests"},
     frontend_functions: {type: [String], ref: "frontend_tests"}
-})
+}, { versionKey: false })
 
 const frontendFunctionTestSchema = new mongoose.Schema({
     _id: String,

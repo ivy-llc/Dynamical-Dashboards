@@ -247,8 +247,8 @@ router.post("/demos", async (req, res) => {
         const demo = new demosModel({
           _id: req.body["_id"],
           label: req.body["label"],
+          company: req.body["company"],
           ivy_functions: req.body["ivy_functions"],
-
           frontend_functions: req.body["frontend_functions"]
         })
     
